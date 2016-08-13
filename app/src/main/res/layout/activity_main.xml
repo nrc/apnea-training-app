@@ -56,6 +56,16 @@
                     android:layout_centerVertical="true"
                     android:layout_toLeftOf="@id/reset_button"/>
 
+                <ImageButton
+                    android:id="@+id/logbook_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:src="@drawable/logbook"
+                    android:tint="#ffffff"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/pause_button"/>
+
             </RelativeLayout>
         </android.support.v7.widget.Toolbar>
 

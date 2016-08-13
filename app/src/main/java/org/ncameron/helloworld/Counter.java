@@ -6,6 +6,11 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
 
+import org.ncameron.helloworld.logbook.Book;
+import org.ncameron.helloworld.logbook.Entry;
+
+import java.util.Date;
+
 import static java.lang.Thread.*;
 
 
@@ -25,6 +30,7 @@ public class Counter implements Runnable {
 
     private Handler handler;
     private Beeper beeper;
+    private MainActivity activity;
 
     private Thread thread = null;
 
@@ -51,6 +57,7 @@ public class Counter implements Runnable {
     public Counter(MainActivity activity) {
         handler = new CounterHandler(Looper.getMainLooper(), activity);
         beeper = new Beeper(activity);
+        this.activity = activity;
     }
 
     public static Counter fromState(Bundle savedInstanceState, MainActivity activity) {
@@ -88,7 +95,9 @@ public class Counter implements Runnable {
                     reps = 0;
                     seconds = 0;
                     state = State.STOPPED;
+                    Entry log_entry = make_log_entry();
                     handler.sendEmptyMessage(MSG_STOP);
+                    write_log_entry(log_entry);
                 } else {
                     seconds = SECONDS;
                     state = State.RESTING;
@@ -139,13 +148,16 @@ public class Counter implements Runnable {
     }
 
     public synchronized void reset() {
+        state = State.STOPPING;
         assertStateInvariants();
+        Entry log_entry = make_log_entry();
         state = State.READY;
         seconds = SECONDS;
         reps = REPS;
         assertStateInvariants();
         handler.sendEmptyMessage(MSG_STOP);
         handler.sendEmptyMessage(MSG_RENDER);
+        write_log_entry(log_entry);
     }
 
     public synchronized void tap() {
@@ -203,6 +215,23 @@ public class Counter implements Runnable {
         }
     }
 
+    // Invariant: this.state = STOPPED | STOPPING
+    private Entry make_log_entry() {
+        // Don't log a run where we didn't manage a single rep.
+        if (state == State.STOPPING &&
+                this.REPS - this.reps == 0) {
+            return null;
+        }
+
+        return new Entry(new Date(), this.REPS - this.reps, this.REPS, "", "Built-in quick CO2", new int[]{REPS, SECONDS});
+    }
+
+    private void write_log_entry(Entry entry) {
+        if (entry != null) {
+            Book.write_entry(activity.getApplicationContext(), entry);
+        }
+    }
+
     // TODO these do fuck all
     synchronized void assertStateInvariants() {
         switch (state) {
@@ -222,6 +251,7 @@ public class Counter implements Runnable {
                 assert(thread == null);
                 break;
             case RUNNING:
+            case STOPPING:
                 assert(seconds > 0);
                 assert(reps > 0);
                 assert(thread != null);
@@ -235,7 +265,7 @@ public class Counter implements Runnable {
     }
 
     private enum State {
-        READY, RUNNING, RESTING, PAUSED, STOPPED
+        READY, RUNNING, RESTING, PAUSED, STOPPED, STOPPING
     }
 }
 

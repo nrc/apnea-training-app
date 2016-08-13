@@ -1,5 +1,6 @@
 package org.ncameron.helloworld;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -41,7 +42,11 @@ public class MainActivity extends AppCompatActivity implements Renderer {
     @Override
     protected void onRestart() {
         super.onRestart();
-        counter.doResume();
+        // Used to call counter.doResume() here, which means un-pausing when returning to the app
+        // but that would start the timer even if it were not paused. Could remember the previous
+        // state to choose whether to restart or not. But probably if we want to have that behaviour
+        // when switching app, we want to continue counting, so maybe need different behaviour around
+        // onStop?
     }
 
     @Override
@@ -78,6 +83,20 @@ public class MainActivity extends AppCompatActivity implements Renderer {
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     counter.reset();
+                }
+                return true;
+            }
+        });
+
+        // Logbook button.
+        View logbook_button = findViewById(R.id.logbook_button);
+        logbook_button.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    counter.pause();
+                    Intent intent = new Intent(MainActivity.this, LogbookActivity.class);
+                    startActivity(intent);
+                    // TODO returning from logbook starts the timer
                 }
                 return true;
             }

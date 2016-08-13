@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_margin="10dp"
+    android:background="@color/colorPrimary">
+    <TextView
+        android:id="@+id/log_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text=""
+        android:textColor="@color/colorAccent"
+        android:textSize="20dp"/>
+    <RelativeLayout
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        tools:showIn="@layout/content_logbook" >
+        <TextView
+            android:id="@+id/log_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text=""
+            android:layout_alignParentLeft="true"
+            android:textColor="@color/colorAccent"
+            android:textSize="18dp"/>
+        <TextView
+            android:id="@+id/log_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text=""
+            android:layout_alignParentRight="true"
+            android:textColor="@color/colorAccent"
+            android:textSize="18dp"/>
+    </RelativeLayout>
+</LinearLayout>
+
