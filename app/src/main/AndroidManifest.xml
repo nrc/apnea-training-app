@@ -31,6 +31,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.ncameron.helloworld.MainActivity" />
         </activity>
+        <activity
+            android:name=".ScriptsActivity"
+            android:label=""
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.ncameron.helloworld.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

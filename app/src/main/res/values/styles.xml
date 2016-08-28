@@ -22,6 +22,12 @@
         <item name="android:textSize">120sp</item>
     </style>
 
+    <style name="label">
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:fontFamily">sans-serif-thin</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+
     <style name="reps">
         <item name="android:textColor">#ffffff</item>
         <item name="android:fontFamily">sans-serif-thin</item>

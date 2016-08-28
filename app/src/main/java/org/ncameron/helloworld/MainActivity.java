@@ -1,25 +1,32 @@
 package org.ncameron.helloworld;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import org.ncameron.helloworld.scripts.Script;
+
 public class MainActivity extends AppCompatActivity implements Renderer {
     public final static String EXTRA_MESSAGE = "org.ncameron.helloworld.MESSAGE";
 
-    private Counter counter = new Counter(this);
+    private Counter counter;
+    private Script script;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        counter = Counter.fromState(savedInstanceState, this);
+        script = Script.read_script(getApplicationContext());
+        counter = Counter.fromState(savedInstanceState, this, script);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
@@ -96,11 +103,32 @@ public class MainActivity extends AppCompatActivity implements Renderer {
                     counter.pause();
                     Intent intent = new Intent(MainActivity.this, LogbookActivity.class);
                     startActivity(intent);
-                    // TODO returning from logbook starts the timer
                 }
                 return true;
             }
         });
+
+        // Scripts button.
+        View scripts_button = findViewById(R.id.scripts_button);
+        scripts_button.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    counter.pause();
+                    Intent intent = new Intent(MainActivity.this, ScriptsActivity.class);
+                    intent.putExtra("cur_index", counter.getScript());
+                    startActivityForResult(intent, 0);
+                }
+                return true;
+            }
+        });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 0 && resultCode == Activity.RESULT_OK) {
+            counter.set_script(data.getIntExtra("index", 0), script);
+        }
     }
 
     @Override
@@ -115,11 +143,18 @@ public class MainActivity extends AppCompatActivity implements Renderer {
 
     @Override
     public void render() {
+        if (counter == null || script == null) {
+            return;
+        }
+
         String time_str = counter.getMins() + ":" + counter.getSeconds();
         TextView text_counter = (TextView) findViewById(R.id.text_counter);
         text_counter.setText(time_str);
 
         TextView text_reps = (TextView) findViewById(R.id.text_reps);
         text_reps.setText(counter.getReps());
+
+        TextView text_label = (TextView) findViewById(R.id.text_label);
+        text_label.setText(counter.getLabel());
     }
 }

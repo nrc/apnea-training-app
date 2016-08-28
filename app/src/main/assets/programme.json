@@ -1,0 +1,130 @@
+{
+  "templates": [
+    {
+      "name": "quick CO2",
+      "variables": ["count", "time"],
+      "count": "count",
+      "body": [
+        {
+          "label": "hold",
+          "time": "time",
+          "beep": true
+        },
+        {
+          "label": "rest",
+          "wait": true
+        }
+      ]
+    },
+    {
+      "name": "O2",
+      "variables": ["count", "start_time", "rest_time"],
+      "count": "count",
+      "body": [
+        {
+          "label": "hold",
+          "time": "(start_time - (i * 10))",
+          "beep": true
+        },
+        {
+          "label": "rest",
+          "time": "rest_time",
+          "beep": true
+        }
+      ]
+    },
+    {
+      "name": "CO2",
+      "variables": ["count", "time", "start_rest_time"],
+      "count": "count",
+      "body": [
+        {
+          "label": "hold",
+          "time": "time",
+          "beep": true
+        },
+        {
+          "label": "rest",
+          "time": "((start_rest_time - (i * 10))",
+          "beep": true
+        }
+      ]
+    },
+    {
+      "name": "pranic breathing",
+      "variables": ["base_time"],
+      "count": 10,
+      "body": [
+        {
+          "label": "exhale",
+          "time": "(base_time * 2)"
+        },
+        {
+          "label": "inhale",
+          "time": "base_time"
+        },
+        {
+          "label": "hold",
+          "time": "(base_time * 4)",
+          "beep": true
+        }
+      ]
+    },
+    {
+      "name": "pranic breathing with exhale",
+      "variables": ["base_time"],
+      "count": 10,
+      "body": [
+        {
+          "label": "exhale",
+          "time": "(base_time * 2)"
+        },
+        {
+          "label": "hold",
+          "time": "base_time"
+        },
+        {
+          "label": "inhale",
+          "time": "base_time"
+        },
+        {
+          "label": "hold",
+          "time": "(base_time * 4)",
+          "beep": true
+        }
+      ]
+    }
+  ],
+  "instances": [
+    {
+      "template": "quick CO2",
+      "variables": [6, 95]
+    },
+    {
+      "name": "TEST quick CO2",
+      "template": "quick CO2",
+      "variables": [2, 5]
+    },
+    {
+      "name": "O2 exhale",
+      "template": "O2",
+      "variables": [7, 30, 60]
+    },
+    {
+      "template": "O2",
+      "variables": [6, 90, 120]
+    },
+    {
+      "template": "CO2",
+      "variables": [6, 90, 120]
+    },
+    {
+      "template": "pranic breathing",
+      "variables": [9]
+    },
+    {
+      "template": "pranic breathing with exhale",
+      "variables": [8]
+    }
+  ]
+}

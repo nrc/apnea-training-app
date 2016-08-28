@@ -1,18 +1,45 @@
 package org.ncameron.helloworld.scripts;
 
+import android.content.Context;
 import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class Script {
     Template[] templates;
     Instance[] instances;
 
-    public static Script from_json(JSONObject input) {
+    // TODO make async
+    public static Script read_script(Context context) {
+        JSONObject json;
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(context.getAssets().open("programme.json")));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+            reader.close();
+            json = new JSONObject(sb.toString());
+        } catch (IOException e) {
+            Log.e("Script", "Error reading script", e);
+            return null;
+        } catch (JSONException e) {
+            Log.e("Script", "Error parsing script from JSON", e);
+            return null;
+        }
+
+        return from_json(json);
+    }
+
+    static Script from_json(JSONObject input) {
         try {
             JSONArray templates = input.getJSONArray("templates");
             JSONArray instances = input.getJSONArray("instances");
@@ -33,7 +60,17 @@ public class Script {
         }
     }
 
-    public ArrayList<CompiledInstance> compile_instances() {
+    public String[] script_names() {
+        ArrayList<CompiledInstance> compiled = compile_instances();
+        String[] result = new String[compiled.size()];
+        for (int i = 0; i < result.length; ++i) {
+            result[i] = compiled.get(i).display_name;
+        }
+
+        return result;
+    }
+
+    ArrayList<CompiledInstance> compile_instances() {
         ArrayList<CompiledInstance> result = new ArrayList<>();
         for (Instance instance: instances) {
             Template template = get_template(instance.template);
@@ -46,12 +83,22 @@ public class Script {
                 continue;
             }
             CompiledInstance compiled = new CompiledInstance();
+            compiled.name = instance.name;
             compiled.template = template;
             compiled.variables = instance.variables;
             compiled.display_name = instance.display_name(template.display_name(instance.variables));
             result.add(compiled);
         }
         return result;
+    }
+
+    public Executable get_executable(int index) {
+        ArrayList<CompiledInstance> compiled = compile_instances();
+        if (index >= compiled.size()) {
+            return null;
+        }
+
+        return compiled.get(index).to_executable();
     }
 
     public Template get_template(String name) {
@@ -132,6 +179,7 @@ class Instance {
 
 class CompiledInstance {
     Template template;
+    String name;
     String display_name;
     int[] variables;
 
