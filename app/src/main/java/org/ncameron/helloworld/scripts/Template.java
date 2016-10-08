@@ -64,7 +64,8 @@ public class Template {
         // binop ::= + | - | *
 
         Evaluator e = new Evaluator(this.variables, variables, i);
-        return e.expr(input.trim());
+        int result = e.expr(input.trim());
+        return result;
     }
 }
 
@@ -80,16 +81,28 @@ class Evaluator {
     }
 
     String read_str(String input) {
+        int paren_depth = 0;
         for (int i = 0; i < input.length(); ++i) {
             char cur = input.charAt(i);
             switch (cur) {
+                case '(':
+                    paren_depth += 1;
+                    break;
+                case ')':
+                    paren_depth -= 1;
+                    if (paren_depth < 0) {
+                        return input.substring(0, i);
+                    }
+                    if (paren_depth == 0) {
+                        return input.substring(0, i + 1);
+                    }
                 case ' ':
                 case '+':
                 case '-':
                 case '*':
-                case '(':
-                case ')':
-                    return input.substring(0, i);
+                    if (paren_depth == 0) {
+                        return input.substring(0, i);
+                    }
             }
         }
 
@@ -120,8 +133,8 @@ class Evaluator {
             remaining = remaining.substring(1).trim();
             String rhs_str = read_str(remaining);
             remaining = remaining.substring(rhs_str.length()).trim();
-            if (remaining.charAt(0) != ')') {
-                Log.e("Evaluator", "Unclosed paren in: " + input);
+            if (remaining.isEmpty() || remaining.charAt(0) != ')') {
+                Log.e("Evaluator", "Unclosed paren in: " + input + ", found: `" + remaining + "`");
                 return -1;
             }
 

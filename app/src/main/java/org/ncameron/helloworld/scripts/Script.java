@@ -140,7 +140,11 @@ class Segment {
         if (this.wait) {
             result.time = -1;
         } else {
-            result.time = template.eval(this.time, variables, i);
+            int time = template.eval(this.time, variables, i);
+            if (time < 0) {
+                return null;
+            }
+            result.time = time;
         }
         return result;
     }
@@ -172,7 +176,7 @@ class Instance {
         if (this.name == null) {
             return template_display_name;
         } else {
-            return this.name + " (" + template_display_name + ">)";
+            return this.name + " (" + template_display_name + ")";
         }
     }
 }
@@ -192,7 +196,11 @@ class CompiledInstance {
             exec.reps[i] = new ExecRep();
             ExecSegment[] body = new ExecSegment[template.body.length];
             for (int j = 0; j < template.body.length; ++j) {
-                body[j] = template.body[j].to_executable(template, variables, i);
+                ExecSegment segment = template.body[j].to_executable(template, variables, i);
+                if (segment == null) {
+                    return null;
+                }
+                body[j] = segment;
             }
             exec.reps[i].segments = body;
         }

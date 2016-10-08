@@ -111,7 +111,6 @@ public class Counter implements Runnable {
         result.state = State.valueOf(savedInstanceState.getString("state"));
         result.reps = savedInstanceState.getInt("reps");
         result.seconds = savedInstanceState.getInt("seconds");
-        result.assertStateInvariants();
 
         if (result.state == State.RUNNING) {
             result.runTimer();
@@ -119,6 +118,7 @@ public class Counter implements Runnable {
             result.handler.sendEmptyMessage(MSG_RENDER);
         }
 
+        result.assertStateInvariants();
         return result;
     }
 

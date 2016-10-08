@@ -23,7 +23,7 @@
       "body": [
         {
           "label": "hold",
-          "time": "(start_time - (i * 10))",
+          "time": "(start_time + (i * 10))",
           "beep": true
         },
         {
@@ -45,7 +45,7 @@
         },
         {
           "label": "rest",
-          "time": "((start_rest_time - (i * 10))",
+          "time": "(start_rest_time - (i * 15))",
           "beep": true
         }
       ]
@@ -98,12 +98,17 @@
   "instances": [
     {
       "template": "quick CO2",
-      "variables": [6, 95]
+      "variables": [8, 95]
+    },
+    {
+      "name": "short quick CO2",
+      "template": "quick CO2",
+      "variables": [12, 75]
     },
     {
       "name": "TEST quick CO2",
       "template": "quick CO2",
-      "variables": [2, 5]
+      "variables": [8, 5]
     },
     {
       "name": "O2 exhale",
@@ -112,11 +117,11 @@
     },
     {
       "template": "O2",
-      "variables": [6, 90, 120]
+      "variables": [6, 120, 120]
     },
     {
       "template": "CO2",
-      "variables": [6, 90, 120]
+      "variables": [6, 120, 120]
     },
     {
       "template": "pranic breathing",
