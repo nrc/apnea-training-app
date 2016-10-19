@@ -221,7 +221,7 @@ public class Counter implements Runnable {
 
     public synchronized void reset() {
         if (state == State.RUNNING) {
-            state = State.STOPPING;
+            return;
         }
         assertStateInvariants();
         Entry log_entry = make_log_entry();
